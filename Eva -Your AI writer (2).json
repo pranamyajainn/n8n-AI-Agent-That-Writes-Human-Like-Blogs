@@ -1,0 +1,582 @@
+{
+  "name": "Eva -Your AI writer",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Eva - Your AI writer ",
+        "formDescription": "Turn your ideas into polish content. Just fill in the inputs, i will craft Blog post, email them to you, ready to publish.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Topic",
+              "fieldType": "textarea",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Raw content",
+              "fieldType": "textarea",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Target Audience",
+              "fieldType": "textarea",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Tone ",
+              "fieldType": "textarea"
+            },
+            {
+              "fieldLabel": "Content Type",
+              "fieldType": "textarea",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Keywords",
+              "fieldType": "textarea",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Word count ",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Author Style ",
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        -32
+      ],
+      "id": "a9e7f7b8-4aab-4bae-8c80-dbf851c03fc6",
+      "name": "On form submission",
+      "webhookId": "1bdde9fd-7f42-4a23-a8bc-b6f432245ecd"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        352,
+        192
+      ],
+      "id": "9ace9da0-286e-4d72-bde4-80d2cf274582",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "6jlLfeEQDk6ncjvo",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=\nUSER REQUIREMENTS:\n\nTopics: {{ $json.Topic }}\nRaw Content: {{ $json['Raw content'] }}\nTarget Audience: {{ $json['Target Audience'] }}\nTone: {{ $json['Tone '] }}\nContent Type: {{ $json['Content Type'] }}\n\n\nKeywords to Include: {{ $json.Keywords }}\nTarget Length:{{ $json['Word count '] }} words\n\n\nCreate a research-backed content plan that will genuinely help the target audience.\nThink before responding.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a Blog Planning Expert who handles research analysis and content strategy. You create detailed, actionable plans for engaging blog posts.\n\nCRITICAL OUTPUT REQUIREMENTS - FOLLOW EXACTLY:\n1. Output ONLY a single JSON object - no other text\n2. Do NOT use markdown formatting (no ```json```)\n3. Do NOT include explanations before or after the JSON\n4. Ensure all JSON keys use double quotes\n5. Escape any special characters in string values\n6. Do NOT include trailing commas\n\nTASK 1 - ANALYZE RESEARCH DATA:\nResearch the web using the Serp API tool. Analyze the received research data to identify:\n- Current trends and hot topics\n- Common pain points and frustrations\n- Popular questions people are asking\n- Recent developments in the field\n- Specific examples and case studies\n- Statistics and data points that add credibility\n\nTASK 2 - CREATE CONTENT STRUCTURE:\nBased on your research analysis and the raw input, create a detailed blog post outline that:\n\n1. **Hook Strategy**: Identify the most compelling opening (statistic, story, problem, or question)\n2. **Content Flow**: Design logical progression from problem to solution\n3. **Section Planning**: Create 4-6 main sections with specific purposes\n4. **Example Integration**: Plan where to include real examples and case studies\n5. **Engagement Elements**: Map out questions, transitions, and interactive elements\n\nOUTPUT REQUIREMENTS:\nProvide your response as structured JSON:\n\n{\n  \"research_insights\": {\n    \"key_trends\": [\"trend 1\", \"trend 2\", \"trend 3\"],\n    \"pain_points\": [\"specific problem 1\", \"specific problem 2\"],\n    \"popular_questions\": [\"question 1\", \"question 2\"],\n    \"useful_statistics\": [\"stat with source\", \"stat with source\"],\n    \"examples_to_use\": [\"example 1 description\", \"example 2 description\"]\n  },\n  \"content_outline\": {\n    \"title\": \"Compelling, benefit-focused title\",\n    \"hook_strategy\": \"Specific opening approach with details\",\n    \"sections\": [\n      {\n        \"heading\": \"Benefit-focused heading (not topic-focused)\",\n        \"purpose\": \"What this section accomplishes\",\n        \"key_points\": [\"point 1\", \"point 2\", \"point 3\"],\n        \"examples_needed\": [\"specific example to include\"],\n        \"word_count_target\": 200,\n        \"transition_note\": \"How to connect to next section\"\n      }\n    ],\n    \"conclusion_strategy\": \"How to end with impact and action\"\n  }\n}\n\nWRITING STYLE GUIDELINES:\n- Make section headings benefit-focused: \"3 Ways to...\" not \"Types of...\"\n- Plan for conversational, not corporate tone\n- Include specific examples, not generic advice\n- Design for engagement, not just information delivery\n- Plan natural transitions between sections\n\nOUTPUT EXAMPLE (follow this exact format):\n{\"research_insights\":{\"key_trends\":[\"trend 1\",\"trend 2\"],\"pain_points\":[\"problem 1\"],\"popular_questions\":[\"question 1\"],\"useful_statistics\":[\"stat 1\"],\"examples_to_use\":[\"example 1\"]},\"content_outline\":{\"title\":\"Title Here\",\"hook_strategy\":\"Strategy here\",\"sections\":[{\"heading\":\"Heading\",\"purpose\":\"Purpose\",\"key_points\":[\"point 1\"],\"examples_needed\":[\"example\"],\"word_count_target\":200,\"transition_note\":\"transition\"}],\"conclusion_strategy\":\"conclusion\"}}\n\n## Tools:\n\nCall the Serp API tool to research about it on the web and extract the relevant trends.\n\n## Notes:\n- Only return the JSON without any extra explanations.\n",
+          "maxIterations": 15
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        280,
+        -32
+      ],
+      "id": "edcd348c-7fe1-4d37-aad5-ff1a0e2eb8bf",
+      "name": "Research and Planning Expert",
+      "alwaysOutputData": false,
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        224,
+        192
+      ],
+      "id": "0b56b3b1-5ead-4321-81a2-880acd9012db",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RIcwm8KzJR8GCtId",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        920,
+        192
+      ],
+      "id": "7c4570f9-3cb3-4f1b-a248-9f4a7bdfcd29",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RIcwm8KzJR8GCtId",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=CONTENT PLAN:\n{{ $('Research and Planning Expert').item.json.output.toJsonString() }}\n\nSECTION TO WRITE: \nCurrent section: {{ $json.heading }}\nPurpose: {{ $json.purpose }}\nKey Points: {{ $json.key_points }}\nExamples Needed: {{ $json.examples_needed }}\nWord Count Target: {{ $json.word_count_target }}\nTransition Note: {{ $json.transition_note }}\n\nUSER REQUIREMENTS:\nTopics: {{ $('On form submission').first().json.Topic }}\nRaw Content: {{ $('On form submission').first().json['Raw content'] }}\nTarget Audience: {{ $('On form submission').first().json['Target Audience'] }}\nTone: {{ $('On form submission').first().json['Tone '] }}\nContent Type: {{ $('On form submission').first().json['Content Type'] }}\nKeywords to Include: {{ $('On form submission').first().json.Keywords }}\nTarget Length: {{ $('On form submission').first().json['Word count '] }} words\n\nWrite this section following the research insights and content plan provided. Make it sound natural and conversational. Think before responding.",
+        "options": {
+          "systemMessage": "=You are a Content Generation Expert who writes engaging, human-like blog content. You create content that sounds like it was written by a knowledgeable friend, not an AI.\n\nYOUR WRITING PERSONALITY:\n- Conversational and approachable (use contractions: don't, won't, can't)\n- Uses storytelling and real scenarios\n- Explains complex things simply with analogies\n- Includes specific, actionable advice with concrete steps\n- Varies sentence and paragraph lengths naturally\n- Uses casual transitions that sound human\n\nWRITING GUIDELINES:\n1. **Natural Language Patterns:**\n   - Mix short punchy sentences (3-7 words) with longer explanatory ones\n   - Use parenthetical asides: \"(trust me on this)\" or \"(learned this the hard way)\"\n   - Include hesitations and clarifications: \"Well...\" \"Look...\" \"Here's the thing...\"\n   - Add conversational emphasis: \"seriously,\" \"honestly,\" \"genuinely\"\n\n2. **Engagement Techniques:**\n   - Start sections with mini-stories or relatable scenarios\n   - Use \"you\" to directly address the reader\n   - Ask rhetorical questions that readers are thinking\n   - Include specific examples with concrete details (names, numbers, situations)\n   - Use analogies to explain complex concepts\n\n3. **Avoid These Robotic Patterns:**\n   - Don't use \"Furthermore,\" \"Additionally,\" \"Moreover\" - use \"Plus,\" \"Also,\" \"And here's another thing\"\n   - Replace \"It is important to note\" with \"Keep in mind\" or \"Here's what matters\"\n   - Change \"In order to\" to just \"To\"\n   - Avoid \"Individuals\" - use \"People\"\n   - Never use \"Utilize\" - always \"Use\"\n\n4. **Structure Guidelines:**\n   - Vary paragraph lengths: some 1 sentence, others 3-4 sentences. Use proper line breaks and paragraph gaps.\n   - Use subheadings that promise benefits, not just topics\n   - Add bullet points only when listing specific steps or items\n   - Include smooth transitions that sound natural\n\nCONTENT TYPES TO HANDLE:\n- **Introduction**: Hook readers immediately with relatable scenario or surprising insight\n- **Main Sections**: Develop points with examples, explanations, and actionable advice\n- **Conclusion**: Summarize key takeaways and motivate action\n\nWrite like you're a knowledgeable expert sharing genuinely helpful advice with a friend over coffee.",
+          "maxIterations": 15
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        912,
+        -32
+      ],
+      "id": "09e7169c-11f5-4a98-a8b5-180278c53e6b",
+      "name": "Content Generation Expert",
+      "alwaysOutputData": false,
+      "executeOnce": false
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        192
+      ],
+      "id": "1965dde8-883b-4e6e-9303-4057898b05e3",
+      "name": "Think"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        1048,
+        192
+      ],
+      "id": "baef2fe4-dda0-4b5b-888b-dcc5ad774069",
+      "name": "Think1"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "output"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        -32
+      ],
+      "id": "788367be-c602-48ec-88ff-a8033b7d6ed3",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        192
+      ],
+      "id": "8ad72f7e-3108-4e1e-8a8d-d865cb354607",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RIcwm8KzJR8GCtId",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        1616,
+        192
+      ],
+      "id": "c27ab790-6347-433f-a1e7-b789457f1276",
+      "name": "Think2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=BLOG POST CONTENT: {{ $json.output }}\n\nBLOG POST TITLE: {{ $('Research and Planning Expert').item.json.output.content_outline.title }}\n\nTake this blog post & title and add natural personality: swap some phrasing for colloquial expressions, use common idioms, break up longer sentences, and add small tangents or opinions as humans do. Reword this text to feel less formal and more like a personal journal entry—don’t be afraid to include anecdotes, minor errors, and casual phrasing. Don't pass on the same title, content, or section heading.\n\n\n\nUSER REQUIREMENTS:\n\nTopics: {{ $('On form submission').item.json.Topic }}\nRaw Content: {{ $('On form submission').item.json['Raw content'] }}\nTarget Audience: {{ $('On form submission').item.json['Target Audience'] }}\nTone: {{ $('On form submission').item.json['Tone '] }}\nContent Type: {{ $('On form submission').item.json['Content Type'] }}\n\n\nKeywords to Include: {{ $('On form submission').item.json.Keywords }}\nTarget Length:{{ $('On form submission').item.json['Word count '] }} words\n\n\nCombine all sections into a polished, SEO-optimized, human-sounding blog post ready for publication. Remove all em-dashes and en-dashes from the final content and title. Think before responding. \n\nImportant edit you must make to the content: connect clauses directly and remove em dashes. Rewrite this like a regular person would, imagine you're chatting with a friend over coffee. Avoid AI tell-tales like cliché phrases (“let’s dive in”) and remove overly formal grammar or marketing jargon.\n\nThe Content must be in Markdown. The heading must be Heading 3, and the subheadings or section headings must be Heading 4. The content must not contain the title of the Blog Post.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a Content Finalization Expert who transforms good blog content into exceptional, human-like posts. You handle enhancement, SEO optimization, and quality control.\n\nTASK 1 - HUMAN TOUCH ENHANCEMENT:\nReview the content and enhance it to sound completely natural:\n\n**Fix Robotic Patterns:**\n- Replace formal transitions with casual ones\n- Change stiff language to conversational tone\n- Add personality through casual interjections\n- Include more specific details and examples\n- Vary sentence structure for natural rhythm\n\n**Add Human Elements:**\n- Conversational asides in parentheses\n- Natural emphasis words: \"seriously,\" \"honestly,\" \"actually\"\n- Casual observations: \"Here's what I've noticed...\"\n- Relatable interjections: \"I know, I know...\" \"Stay with me here...\"\n- Personal touches without being too personal\n\nTASK 2 - SEO OPTIMIZATION:\nIntegrate keywords naturally without sounding forced:\n- Find natural places to include target keywords\n- Use variations and synonyms of keywords\n- Maintain keyword density around 1-2%\n- Create compelling meta description (150-160 characters)\n- Suggest internal linking opportunities\n\nTASK 3 - QUALITY CONTROL:\nEvaluate the content on these criteria (1-10 scale):\n- Natural Language: Does it sound human-written?\n- Value Delivery: Will readers benefit from this?\n- Engagement: Is it interesting and easy to read?\n- Authenticity: Does it avoid generic AI phrases?\n- Actionability: Can readers implement the advice?\n\nTASK 4 - FINAL FORMATTING:\n- Ensure proper heading hierarchy (H1, H2, H3)\n- Add appropriate formatting (bold, italics, lists)\n- Include call-to-action elements\n- Structure for easy scanning\n\nTASK 5 - ADD FAQs SECTION:\n\t•\tGenerate 8-10 FAQs that readers might naturally ask after reading the blog post.\n\t•\tEach FAQ should be short, specific, and practical (not generic).\n\t•\tProvide clear, concise, and helpful answers in a conversational style.\n\t•\tEnsure FAQs use the target keywords naturally where relevant.\n\t•\tFormat them in Markdown under a separate ## Frequently Asked Questions section.\n\nOUTPUT REQUIREMENTS:\nProvide structured JSON response:\n\n{ \"final_content\": { \"title\": \"SEO-optimized title\", \"meta_description\": \"Compelling meta description\", \"content\": \"Complete blog post with formatting\", \"word_count\": actual_word_count }, \"seo_data\": { \"keywords_used\": [\"keyword density percentages\"], \"internal_link_suggestions\": [\"anchor text: suggested URL\"], \"image_alt_suggestions\": [\"alt text for main images\"] }, \"quality_scores\": { \"natural_language\": score, \"value_delivery\": score, \"engagement\": score, \"authenticity\": score, \"actionability\": score, \"overall_score\": average_score }, \"improvement_notes\": [\"specific suggestions if overall_score < 8\"] }\n\n\nMake the content sound like it was written by a knowledgeable human expert who genuinely wants to help the reader succeed. Remove all em-dashes and en-dashes from the final content and title. The Content must be in Markdown (well structured, use proper hierarchy).\n\n## Notes:\n- Only return the JSON without any extra explanations.\n- Avoid generic or AI-like verbs such as: unleashing, empowering, transforming, disrupting, optimizing, accelerating, reimagining, enhancing, amplifying, and revolutionizing in the title, subheadings and content. Instead, use plain language that sounds like how real people talk or write.\n- Your job is to ultra-humanize the content that you receive from the previous AI Agent.\n- The blog's title and section headings must also be rewritten as per the given instructions.",
+          "maxIterations": 15
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1544,
+        -32
+      ],
+      "id": "388ea3fa-8b2d-46f5-92f0-691771934abf",
+      "name": "Polish and Finalization expert",
+      "alwaysOutputData": false,
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.output.final_content.content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        1952,
+        -32
+      ],
+      "id": "065cac54-ae1b-407e-8a6a-2918237b10af",
+      "name": "Markdown"
+    },
+    {
+      "parameters": {
+        "jsCode": "const boundary = 'foo_bar_baz';\n\nconst metadata = {\n  name: $input.first().json.output.final_content.title,\n  mimeType: 'application/vnd.google-apps.document',\n};\n\n// Global wrapper with Inter font and line-height for spacing\nconst html = `\n<html>\n  <body>\n    <div style=\"font-family: Inter, sans-serif; line-height: 1.6; font-size: 14px; color: #333; margin-bottom: 20px;\">\n      ${$input.first().json.data}\n    </div>\n  </body>\n</html>`;\n\n// Build multipart/related body\nlet body = '';\nbody += `--${boundary}\\r\\n`;\nbody += `Content-Type: application/json; charset=UTF-8\\r\\n\\r\\n`;\nbody += `${JSON.stringify(metadata)}\\r\\n`;\nbody += `--${boundary}\\r\\n`;\nbody += `Content-Type: text/html\\r\\n\\r\\n`;\nbody += `${html}\\r\\n`;\nbody += `--${boundary}--\\r\\n`;\n\nreturn [\n  {\n    json: {\n      rawData: body,\n      headers: {\n        'Content-Type': `multipart/related; boundary=${boundary}`\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2176,
+        -32
+      ],
+      "id": "8cbe43de-4812-4f53-bcbd-6a93df0bf694",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.googleapis.com/upload/drive/v3/files",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDocsOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "uploadType",
+              "value": "multipart"
+            },
+            {
+              "name": "supportsAllDrives",
+              "value": "true"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "={{ $json.headers['Content-Type'] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "={{ $json.headers['Content-Type'] }}",
+        "body": "={{ $json.rawData }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2400,
+        -32
+      ],
+      "id": "b51cd673-b556-4b74-b05b-f991fada3028",
+      "name": "HTTP Request",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "knm1xEajNC7iV9Pm",
+          "name": "Google Docs account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "pranamyajeet@gmail.com ",
+        "subject": "Your Blog post is ready ",
+        "message": "=<!DOCTYPE html> <html>   <body style=\"font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; color: #333;\">     <div style=\"max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);\">       <h2 style=\"color: #2c3e50; border-bottom: 2px solid #4CAF50; padding-bottom: 10px;\">         ✅ Your SEO Blog Post is Ready!       </h2>        <p style=\"font-size: 16px;\">Here's the link to your completed blog post:</p>       <p>         <a href=\"https://docs.google.com/document/d/{{ $json.id }}/edit\" style=\"color: #4CAF50; font-weight: bold; text-decoration: none;\">View Blog Post</a>       </p>        <hr style=\"margin: 30px 0;\" />        <h3 style=\"color: #2c3e50;\">🔍 SEO Summary</h3>       <ul style=\"padding-left: 20px;\">         <li><strong>Keywords Used:</strong> {{ $('Markdown').item.json.output.seo_data.keywords_used }}</li>         <li><strong>Internal Links:</strong> {{ $('Markdown').item.json.output.seo_data.internal_link_suggestions }} </li>         <li><strong>Image Alt Text:</strong> {{ $('Markdown').item.json.output.seo_data.image_alt_suggestions }} </li>       </ul>        <h3 style=\"color: #2c3e50; margin-top: 30px;\">📊 Quality Scores</h3>       <ul style=\"padding-left: 20px;\">         <li><strong>Natural Language:</strong> {{ $('Markdown').item.json.output.quality_scores.natural_language }}/10</li>         <li><strong>Value Delivery:</strong> {{ $('Markdown').item.json.output.quality_scores.value_delivery }}/10</li>         <li><strong>Engagement:</strong> {{ $('Markdown').item.json.output.quality_scores.engagement }}/10</li>         <li><strong>Authenticity:</strong> {{ $('Markdown').item.json.output.quality_scores.authenticity }}/10</li>         <li><strong>Actionability:</strong> {{ $('Markdown').item.json.output.quality_scores.actionability }}/10</li>         <li><strong>Overall Score:</strong> {{ $('Markdown').item.json.output.quality_scores.overall_score }}/10</li>       </ul>        <h3 style=\"color: #e67e22; margin-top: 30px;\">💡 Suggestions for Improvement</h3>       <ul style=\"padding-left: 20px;\">         {{ $('Markdown').item.json.output.improvement_notes }}         </ul>         <p style=\"margin-top: 40px; font-size: 14px; color: #888;\">I hope you like it.</p>     </div>   </body> </html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2624,
+        -32
+      ],
+      "id": "7ce7c88f-a8b7-407b-98af-19394ab371d6",
+      "name": "Send a message",
+      "webhookId": "fd035a97-9028-4138-ab19-84024eee8144",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ua1dw5MpxhCegdal",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"final_content\": {\n    \"title\": \"How We Got Found on ChatGPT (Not Google)\",\n    \"meta_description\": \"Forget old-school SEO. This is how real businesses are showing up in ChatGPT, Claude, and Gemini search results.\",\n    \"content\": \"### Introduction\\nFour high-ticket clients didn’t find us on Google. Or Instagram. Or any ad.\\n\\nThey found us by typing into ChatGPT, Claude, or Gemini:  \\n**“Best AI automation agency for [X]”**\\n\\nAnd guess what? We showed up. \\n\\nThey all asked us the same thing: *“How did you land in the answer?”*  \\nSo we started digging into what’s actually going on here.\\n\\n### Main Body\\n**LLM Search Is Quietly Replacing SEO**  \\nThese large language models don’t use backlinks or keyword rankings. They generate answers based on patterns from what they’ve read.\\n\\nGoogle knows it too. Search is changing. Gemini responses now show at the top. Tally even said:\\n> “AI search became our biggest acquisition channel.”\\n\\nSo the old tricks?  \\n- Keyword stuffing ❌  \\n- Buying backlinks ❌  \\n- Hashtag flooding ❌  \\nNot helpful here.\\n\\n**So... How Do You Show Up in LLM Answers?**  \\nLLMs don’t “know” you. They just piece things together from what they’ve read online.\\n\\nHere’s what actually helps:\\n- Mention your brand naturally across different websites—not just your own\\n- Answer niche questions in forums, Slack groups, Reddit, Quora\\n- Show up in newsletters, guest blogs, podcast transcripts, and review threads\\n- Be consistent in how you describe your business across the web\\n\\n**Real-World Example**  \\nWe were quoted in a blog post that ranked ‘Top AI Agencies’—and it wasn’t even ours. That single mention triggered multiple leads from AI chat tools.\\n\\n### Conclusion\\nYou can’t force ChatGPT to say your name. But you can increase your odds.\\n\\nThink of it like leaving breadcrumbs across the internet. \\nThe more high-quality mentions and context you create—  \\nthe more likely LLMs connect the dots and say *you* when someone asks for help.\\n\\nDon’t focus on ranking your link.  \\nFocus on becoming *the answer*.\",\n    \"word_count\": 1280\n  },\n  \"seo_data\": {\n    \"keywords_used\": [\n      \"show up in ChatGPT results (2.1%)\",\n      \"LLM search strategy (1.4%)\",\n      \"AI automation agency discovery (1.2%)\"\n    ],\n    \"internal_link_suggestions\": [\n      \"How to optimize for LLM discovery: /llm-search-guide\",\n      \"AI Agency Marketing Playbook: /ai-agency-growth\"\n    ],\n    \"image_alt_suggestions\": [\n      \"Screenshot of someone typing into ChatGPT\",\n      \"Quote card showing Tally’s AI search acquisition statement\"\n    ]\n  },\n  \"quality_scores\": {\n    \"natural_language\": 9.6,\n    \"value_delivery\": 9.5,\n    \"engagement\": 9.2,\n    \"authenticity\": 9.4,\n    \"actionability\": 9.1,\n    \"overall_score\": 9.4\n  },\n  \"improvement_notes\": [\n    \"Add more specific platforms (e.g. Indie Hackers, GrowthMentor) where LLM mentions happen\",\n    \"Include a screenshot or visual example of an LLM answer showing the brand\",\n    \"Strengthen the CTA by offering a checklist to get started with LLM visibility\"\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1744,
+        192
+      ],
+      "id": "7478d8cc-71a8-43e1-b289-bc6d47f92171",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Combined JSON Parser and Section Splitter for n8n Workflow\n// This replaces both the Structured Output Parser AND the Split Out node\n\n// Get input data\nconst inputData = $input.first().json;\nconsole.log('Input data keys:', Object.keys(inputData));\n\n// Try different possible paths for the AI output\nlet rawOutput = inputData.output || \n                inputData.text || \n                inputData.content || \n                inputData.result ||\n                inputData.response ||\n                inputData;\n\nconsole.log('Raw output type:', typeof rawOutput);\n\n// Function to clean and extract JSON from AI response\nfunction extractAndParseJSON(text) {\n  if (typeof text === 'object' && text !== null) {\n    return text; // Already parsed\n  }\n  \n  if (typeof text !== 'string') {\n    throw new Error('Input is not a string or object');\n  }\n  \n  // Remove common AI response formatting\n  let cleaned = text\n    .replace(/```json\\s*/g, '') // Remove ```json\n    .replace(/```\\s*/g, '')     // Remove closing ```\n    .replace(/^[^{]*/, '')      // Remove text before first {\n    .replace(/[^}]*$/, '')      // Remove text after last }\n    .trim();\n  \n  // Find the JSON object bounds more carefully\n  let braceCount = 0;\n  let jsonStart = -1;\n  let jsonEnd = -1;\n  \n  for (let i = 0; i < cleaned.length; i++) {\n    if (cleaned[i] === '{') {\n      if (jsonStart === -1) jsonStart = i;\n      braceCount++;\n    } else if (cleaned[i] === '}') {\n      braceCount--;\n      if (braceCount === 0 && jsonStart !== -1) {\n        jsonEnd = i;\n        break;\n      }\n    }\n  }\n  \n  if (jsonStart !== -1 && jsonEnd !== -1) {\n    cleaned = cleaned.substring(jsonStart, jsonEnd + 1);\n  }\n  \n  // Parse JSON with error handling\n  try {\n    return JSON.parse(cleaned);\n  } catch (error) {\n    // Try to fix common JSON issues\n    cleaned = cleaned\n      .replace(/'/g, '\"')                    // Replace single quotes\n      .replace(/(\\w+):/g, '\"$1\":')          // Quote unquoted keys\n      .replace(/,\\s*}/g, '}')               // Remove trailing commas\n      .replace(/,\\s*]/g, ']')               // Remove trailing commas in arrays\n      .replace(/\\n/g, ' ')                  // Remove newlines\n      .replace(/\\s+/g, ' ');                // Normalize spaces\n    \n    return JSON.parse(cleaned);\n  }\n}\n\n// Function to validate structure and extract sections\nfunction extractSections(data) {\n  // Ensure we have the basic structure\n  if (!data || typeof data !== 'object') {\n    throw new Error('Invalid data structure received');\n  }\n  \n  // Look for content_outline in various possible locations\n  let contentOutline = data.content_outline || \n                      data.contentOutline || \n                      data.outline ||\n                      data.content?.outline;\n  \n  if (!contentOutline) {\n    console.log('Available keys in data:', Object.keys(data));\n    throw new Error('No content_outline found in parsed data');\n  }\n  \n  // Look for sections\n  let sections = contentOutline.sections || \n                contentOutline.section || \n                [];\n  \n  if (!Array.isArray(sections)) {\n    throw new Error('Sections is not an array');\n  }\n  \n  if (sections.length === 0) {\n    console.warn('No sections found, creating default section');\n    sections = [{\n      heading: \"Default Section\",\n      purpose: \"Default content section\",\n      key_points: [\"Default point\"],\n      examples_needed: [\"Default example\"],\n      word_count_target: 300,\n      transition_note: \"Default transition\"\n    }];\n  }\n  \n  console.log(`Found ${sections.length} sections to process`);\n  return { parsedData: data, sections: sections };\n}\n\ntry {\n  // Step 1: Parse the JSON\n  const parsedData = extractAndParseJSON(rawOutput);\n  console.log('Successfully parsed JSON');\n  \n  // Step 2: Extract and validate sections\n  const { parsedData: validatedData, sections } = extractSections(parsedData);\n  console.log('Successfully extracted sections');\n  \n  // Step 3: Return each section as a separate item (like Split Out would do)\n  // BUT also include the full parsed data for downstream nodes that need it\n  const results = sections.map((section, index) => ({\n    json: {\n      // The individual section data\n      ...section,\n      // Also include the full parsed data for reference\n      _fullData: validatedData,\n      _sectionIndex: index,\n      _totalSections: sections.length\n    }\n  }));\n  \n  console.log(`Returning ${results.length} section items`);\n  return results;\n  \n} catch (error) {\n  console.error('Error processing AI output:', error.message);\n  console.error('Raw output sample:', rawOutput ? \n    (typeof rawOutput === 'string' ? rawOutput.substring(0, 300) : JSON.stringify(rawOutput).substring(0, 300)) : \n    'No output received'\n  );\n  \n  // Return a single fallback section to prevent workflow failure\n  return [{\n    json: {\n      heading: \"Error: Processing Failed\",\n      purpose: \"Fallback section due to parsing error\",\n      key_points: [\"AI response could not be processed\", \"Please check the AI model output format\"],\n      examples_needed: [\"Error handling example\"],\n      word_count_target: 200,\n      transition_note: \"Error occurred during processing\",\n      _fullData: {\n        research_insights: {\n          key_trends: [\"Error in processing\"],\n          pain_points: [\"JSON parsing failed\"],\n          popular_questions: [\"Please check AI output\"],\n          useful_statistics: [\"Processing error occurred\"],\n          examples_to_use: [\"Fallback example\"]\n        },\n        content_outline: {\n          title: \"Error: Processing Failed\",\n          hook_strategy: \"Please check AI model configuration\",\n          sections: [{\n            heading: \"Error Section\",\n            purpose: \"Indicate processing failure\",\n            key_points: [\"Check AI output format\"],\n            examples_needed: [\"Error example\"],\n            word_count_target: 200,\n            transition_note: \"Error occurred\"\n          }],\n          conclusion_strategy: \"Handle errors gracefully\"\n        }\n      },\n      _error: {\n        message: error.message,\n        timestamp: new Date().toISOString()\n      }\n    }\n  }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        688,
+        -32
+      ],
+      "id": "33d3dba5-213e-4596-93ed-7c42a16a2243",
+      "name": "Code1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Research and Planning Expert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research and Planning Expert",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research and Planning Expert",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research and Planning Expert": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Content Generation Expert",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research and Planning Expert",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Content Generation Expert",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content Generation Expert": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Polish and Finalization expert",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think2": {
+      "ai_tool": [
+        [
+          {
+            "node": "Polish and Finalization expert",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Polish and Finalization expert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Polish and Finalization expert": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Polish and Finalization expert",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Content Generation Expert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bdbf77c7-03b4-482c-877a-23c4c4d4e311",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "10ce32a65999a91765c86c0a761865f7511a234162a8885895ce3975c39f18af"
+  },
+  "id": "VKzyMN6WsakdZFE7",
+  "tags": []
+}
